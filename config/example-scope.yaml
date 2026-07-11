@@ -1,0 +1,21 @@
+project:
+  name: crapi-local-test
+
+scope:
+  allowed_hosts:
+    - crapi.local
+  allowed_networks:
+    - 172.20.0.0/24
+  allowed_ports:
+    - 80
+    - 443
+    - 8888
+
+testing:
+  destructive_actions: false
+  credential_attacks: false
+  post_exploitation: false
+
+limits:
+  requests_per_second: 5
+  runtime_minutes: 30

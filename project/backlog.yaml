@@ -1,0 +1,40 @@
+version: 1
+current_milestone: M0
+milestones:
+  - id: M0
+    title: Verifiable core
+    status: IN_PROGRESS
+    goals:
+      - provider-neutral LLM interface
+      - persistent sessions
+      - task state machine
+      - immutable scope manifest
+      - planner-executor boundary
+      - unit tests
+  - id: M1
+    title: Isolated execution
+    status: PLANNED
+    goals:
+      - disposable container runner
+      - resource limits
+      - network scope enforcement
+      - artifact collection
+      - kill switch
+  - id: M2
+    title: Controlled discovery
+    status: PLANNED
+    goals:
+      - HTTPx adapter
+      - Katana adapter
+      - Kiterunner adapter
+      - Nuclei adapter
+      - normalized outputs
+  - id: M3
+    title: First laboratory workflow
+    status: PLANNED
+    goals:
+      - REST API Goat environment
+      - recon agent
+      - API mapping agent
+      - evidence validator
+      - report generator

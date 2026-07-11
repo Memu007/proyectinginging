@@ -1,0 +1,25 @@
+{
+  "milestone": "M0",
+  "status": "IN_PROGRESS",
+  "verified": [
+    "provider-neutral LLM protocol with deterministic mock",
+    "task state machine and evidence gate",
+    "JSON session persistence round trip",
+    "session identifier path traversal prevention",
+    "scope manifest host, network, port and positive limit enforcement",
+    "single-step planner-executor orchestration",
+    "executor exceptions recorded as failed tasks",
+    "successful execution without evidence remains unverified"
+  ],
+  "implemented_unverified": [],
+  "blocked": [],
+  "checks": {
+    "pytest_local": "14 passed",
+    "ruff_local": "passed",
+    "compileall_local": "passed",
+    "smoke_local": "passed",
+    "editable_install_local": "passed",
+    "github_actions": "passed on hardened bootstrap commit bc55284318449e664b680d3d3b3dbb4c362f4d79"
+  },
+  "next": "Review and merge the bootstrap PR, then begin M1 isolated execution"
+}
