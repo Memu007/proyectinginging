@@ -35,4 +35,9 @@ jobs:
       - run: pip install -e '.[dev]'
       - run: docker info
       - run: docker pull python:3.11-alpine
-      - run: pytest -q -m docker
+      - name: Docker captures output and artifacts
+        run: pytest -q tests/test_docker_integration.py::test_docker_runner_captures_output_and_artifact
+      - name: Docker enforces timeout
+        run: pytest -q tests/test_docker_integration.py::test_docker_runner_enforces_timeout
+      - name: Docker honors kill switch
+        run: pytest -q tests/test_docker_integration.py::test_docker_runner_honors_kill_switch
