@@ -36,9 +36,49 @@ jobs:
       - run: pip install -e '.[dev]'
       - run: docker pull alpine:3.20
       - run: docker network create --internal pentestng-ci
-      - name: Run Docker isolation integration tests
+      - name: Docker artifact collection
+        id: artifact_test
+        continue-on-error: true
         env:
           PENTESTNG_DOCKER_INTEGRATION: "1"
-        run: pytest -q tests/integration/test_docker_runtime.py
+        run: pytest -q tests/integration/test_docker_runtime.py::test_container_writes_hashed_artifact --junitxml=docker-artifact.xml
+      - name: Docker timeout
+        id: timeout_test
+        continue-on-error: true
+        env:
+          PENTESTNG_DOCKER_INTEGRATION: "1"
+        run: pytest -q tests/integration/test_docker_runtime.py::test_container_timeout_is_enforced --junitxml=docker-timeout.xml
+      - name: Docker kill switch
+        id: kill_test
+        continue-on-error: true
+        env:
+          PENTESTNG_DOCKER_INTEGRATION: "1"
+        run: pytest -q tests/integration/test_docker_runtime.py::test_kill_switch_stops_running_container --junitxml=docker-kill.xml
+      - name: Docker internal network
+        id: network_test
+        continue-on-error: true
+        env:
+          PENTESTNG_DOCKER_INTEGRATION: "1"
+        run: pytest -q tests/integration/test_docker_runtime.py::test_internal_lab_network_is_accepted --junitxml=docker-network.xml
+      - name: Upload Docker test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: docker-test-reports
+          path: docker-*.xml
+          if-no-files-found: error
       - if: always()
         run: docker network rm pentestng-ci || true
+      - name: Fail when a Docker test failed
+        if: always()
+        env:
+          ARTIFACT_OUTCOME: ${{ steps.artifact_test.outcome }}
+          TIMEOUT_OUTCOME: ${{ steps.timeout_test.outcome }}
+          KILL_OUTCOME: ${{ steps.kill_test.outcome }}
+          NETWORK_OUTCOME: ${{ steps.network_test.outcome }}
+        run: |
+          printf 'artifact=%s timeout=%s kill=%s network=%s\n' "$ARTIFACT_OUTCOME" "$TIMEOUT_OUTCOME" "$KILL_OUTCOME" "$NETWORK_OUTCOME"
+          test "$ARTIFACT_OUTCOME" = success
+          test "$TIMEOUT_OUTCOME" = success
+          test "$KILL_OUTCOME" = success
+          test "$NETWORK_OUTCOME" = success
