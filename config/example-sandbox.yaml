@@ -1,0 +1,17 @@
+# Documentation example. Production images should use immutable sha256 digests.
+sandbox:
+  docker_host: unix:///var/run/docker.sock
+  allowed_images:
+    - registry.example/security/httpx@sha256:REPLACE_WITH_64_HEX_CHARACTERS
+  allowed_commands:
+    registry.example/security/httpx@sha256:REPLACE_WITH_64_HEX_CHARACTERS:
+      - /usr/local/bin/httpx
+  allowed_environment: []
+  allowed_docker_networks:
+    - crapi-authorized-lab
+  defaults:
+    network: none
+    cpus: 1.0
+    memory_mb: 512
+    pids: 128
+    timeout_seconds: 300

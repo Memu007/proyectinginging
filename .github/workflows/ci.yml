@@ -10,6 +10,7 @@ permissions:
 jobs:
   test:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -20,3 +21,54 @@ jobs:
       - run: pip install -e '.[dev]'
       - run: pytest -q
       - run: ruff check .
+      - run: python -m compileall -q src tests
+
+  docker-integration:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: python -m pip install --upgrade pip
+      - run: pip install -e '.[dev]'
+      - run: docker pull alpine:3.20
+      - run: docker network create --internal pentestng-ci
+      - name: Docker artifact collection
+        id: artifact_test
+        continue-on-error: true
+        env:
+          PENTESTNG_DOCKER_INTEGRATION: "1"
+        run: pytest -q tests/integration/test_docker_runtime.py::test_container_writes_hashed_artifact --junitxml=docker-artifact.xml
+      - name: Docker timeout
+        id: timeout_test
+        continue-on-error: true
+        env:
+          PENTESTNG_DOCKER_INTEGRATION: "1"
+        run: pytest -q tests/integration/test_docker_runtime.py::test_container_timeout_is_enforced --junitxml=docker-timeout.xml
+      - name: Docker kill switch
+        id: kill_test
+        continue-on-error: true
+        env:
+          PENTESTNG_DOCKER_INTEGRATION: "1"
+        run: pytest -q tests/integration/test_docker_runtime.py::test_kill_switch_stops_running_container --junitxml=docker-kill.xml
+      - name: Docker internal network
+        id: network_test
+        continue-on-error: true
+        env:
+          PENTESTNG_DOCKER_INTEGRATION: "1"
+        run: pytest -q tests/integration/test_docker_runtime.py::test_internal_lab_network_is_accepted --junitxml=docker-network.xml
+      - name: Upload Docker test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: docker-test-reports
+          path: docker-*.xml
+          if-no-files-found: error
+      - if: always()
+        run: docker network rm pentestng-ci || true
+      - name: Fail when a Docker test failed
+        if: ${{ always() && (steps.artifact_test.outcome != 'success' || steps.timeout_test.outcome != 'success' || steps.kill_test.outcome != 'success' || steps.network_test.outcome != 'success') }}
+        run: exit 1

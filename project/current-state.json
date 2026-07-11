@@ -1,25 +1,36 @@
 {
-  "milestone": "M0",
-  "status": "IN_PROGRESS",
+  "milestone": "M1",
+  "status": "IMPLEMENTED_UNVERIFIED",
   "verified": [
-    "provider-neutral LLM protocol with deterministic mock",
-    "task state machine and evidence gate",
-    "JSON session persistence round trip",
-    "session identifier path traversal prevention",
-    "scope manifest host, network, port and positive limit enforcement",
-    "single-step planner-executor orchestration",
-    "executor exceptions recorded as failed tasks",
-    "successful execution without evidence remains unverified"
+    "M0 provider-neutral LLM and evidence-gated state core",
+    "structured execution specification validation",
+    "exact image and executable allowlists",
+    "image digest pinning enabled by default",
+    "local Unix Docker socket restriction",
+    "read-only non-root container command construction",
+    "CPU, memory, PID, timeout, tmpfs and file descriptor limits",
+    "network disabled by default",
+    "scope validation for named internal lab networks",
+    "artifact path traversal and symbolic-link rejection",
+    "stdout, stderr, total-size and file-count limits with SHA-256 hashing",
+    "thread-safe kill switch behavior"
   ],
-  "implemented_unverified": [],
+  "implemented_unverified": [
+    "real Docker container execution on GitHub Actions",
+    "real container timeout enforcement",
+    "real running-container kill switch",
+    "real internal Docker network validation"
+  ],
   "blocked": [],
   "checks": {
-    "pytest_local": "14 passed",
+    "pytest_local": "44 passed, 4 Docker integration tests skipped",
     "ruff_local": "passed",
+    "security_lint_local": "passed",
     "compileall_local": "passed",
-    "smoke_local": "passed",
     "editable_install_local": "passed",
-    "github_actions": "passed on hardened bootstrap commit bc55284318449e664b680d3d3b3dbb4c362f4d79"
+    "smoke_local": "passed",
+    "github_actions_unit": "pending",
+    "github_actions_docker": "pending"
   },
-  "next": "Review and merge the bootstrap PR, then begin M1 isolated execution"
+  "next": "Publish M1 branch and run unit plus Docker integration jobs"
 }
