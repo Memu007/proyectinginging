@@ -1,25 +1,29 @@
 {
-  "milestone": "M0",
-  "status": "IN_PROGRESS",
+  "milestone": "M1",
+  "status": "IN_REVIEW",
   "verified": [
-    "provider-neutral LLM protocol with deterministic mock",
-    "task state machine and evidence gate",
-    "JSON session persistence round trip",
-    "session identifier path traversal prevention",
-    "scope manifest host, network, port and positive limit enforcement",
-    "single-step planner-executor orchestration",
-    "executor exceptions recorded as failed tasks",
-    "successful execution without evidence remains unverified"
+    "M0 provider-neutral and evidence-gated core",
+    "allowlisted images and executables",
+    "digest requirement for production images",
+    "Docker command isolation flags",
+    "CPU, memory, PID, timeout and output limits",
+    "offline container networking",
+    "scope validation for declared targets",
+    "artifact path, type, count and size policy",
+    "SHA-256 artifact hashing",
+    "thread-safe kill switch",
+    "cleanup after artifact persistence failures"
   ],
-  "implemented_unverified": [],
+  "implemented_unverified": [
+    "Docker runtime success, timeout and cancellation integration pending GitHub Actions"
+  ],
   "blocked": [],
   "checks": {
-    "pytest_local": "14 passed",
+    "pytest_local": "35 passed, 3 Docker tests skipped because daemon unavailable",
     "ruff_local": "passed",
     "compileall_local": "passed",
-    "smoke_local": "passed",
     "editable_install_local": "passed",
-    "github_actions": "passed on hardened bootstrap commit bc55284318449e664b680d3d3b3dbb4c362f4d79"
+    "github_actions_docker": "pending"
   },
-  "next": "Review and merge the bootstrap PR, then begin M1 isolated execution"
+  "next": "Publish M1 and run Docker integration tests in GitHub Actions"
 }

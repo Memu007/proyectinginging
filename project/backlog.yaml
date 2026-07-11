@@ -1,9 +1,9 @@
 version: 1
-current_milestone: M0
+current_milestone: M1
 milestones:
   - id: M0
     title: Verifiable core
-    status: IN_PROGRESS
+    status: VERIFIED
     goals:
       - provider-neutral LLM interface
       - persistent sessions
@@ -13,13 +13,14 @@ milestones:
       - unit tests
   - id: M1
     title: Isolated execution
-    status: PLANNED
+    status: IMPLEMENTED_UNVERIFIED
     goals:
       - disposable container runner
       - resource limits
       - network scope enforcement
       - artifact collection
       - kill switch
+      - real Docker integration tests
   - id: M2
     title: Controlled discovery
     status: PLANNED
