@@ -32,3 +32,19 @@ def test_rejects_unlisted_host() -> None:
 def test_rejects_unlisted_port() -> None:
     with pytest.raises(ScopeViolation):
         build_manifest().authorize_url("http://crapi.local:9000")
+
+
+def test_rejects_malformed_port() -> None:
+    with pytest.raises(ScopeViolation, match="invalid port"):
+        build_manifest().authorize_url("http://crapi.local:notaport")
+
+
+def test_rejects_nonpositive_limits() -> None:
+    with pytest.raises(ValueError, match="requests_per_second"):
+        ScopeManifest.from_dict(
+            {"project": {"name": "lab"}, "limits": {"requests_per_second": 0}}
+        )
+    with pytest.raises(ValueError, match="runtime_minutes"):
+        ScopeManifest.from_dict(
+            {"project": {"name": "lab"}, "limits": {"runtime_minutes": 0}}
+        )
