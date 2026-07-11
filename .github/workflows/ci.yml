@@ -70,15 +70,5 @@ jobs:
       - if: always()
         run: docker network rm pentestng-ci || true
       - name: Fail when a Docker test failed
-        if: always()
-        env:
-          ARTIFACT_OUTCOME: ${{ steps.artifact_test.outcome }}
-          TIMEOUT_OUTCOME: ${{ steps.timeout_test.outcome }}
-          KILL_OUTCOME: ${{ steps.kill_test.outcome }}
-          NETWORK_OUTCOME: ${{ steps.network_test.outcome }}
-        run: |
-          printf 'artifact=%s timeout=%s kill=%s network=%s\n' "$ARTIFACT_OUTCOME" "$TIMEOUT_OUTCOME" "$KILL_OUTCOME" "$NETWORK_OUTCOME"
-          test "$ARTIFACT_OUTCOME" = success
-          test "$TIMEOUT_OUTCOME" = success
-          test "$KILL_OUTCOME" = success
-          test "$NETWORK_OUTCOME" = success
+        if: ${{ always() && (steps.artifact_test.outcome != 'success' || steps.timeout_test.outcome != 'success' || steps.kill_test.outcome != 'success' || steps.network_test.outcome != 'success') }}
+        run: exit 1
