@@ -1,0 +1,18 @@
+{
+  "milestone": "M0",
+  "status": "IN_PROGRESS",
+  "verified": [
+    "provider-neutral LLM protocol with deterministic mock",
+    "task state machine and evidence gate",
+    "JSON session persistence round trip",
+    "scope manifest host, network and port enforcement",
+    "single-step planner-executor orchestration"
+  ],
+  "implemented_unverified": [],
+  "blocked": [],
+  "checks": {
+    "pytest": "9 passed",
+    "ruff": "passed"
+  },
+  "next": "Publish bootstrap branch and let GitHub Actions repeat the checks"
+}
