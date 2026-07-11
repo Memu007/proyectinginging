@@ -36,7 +36,14 @@ jobs:
       - run: docker info
       - run: docker pull python:3.11-alpine
       - name: Docker captures output and artifacts
-        run: pytest -q tests/test_docker_integration.py::test_docker_runner_captures_output_and_artifact
+        run: pytest -q tests/test_docker_integration.py::test_docker_runner_captures_output_and_artifact --junitxml=docker-capture.xml
+      - name: Upload Docker capture diagnostic
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: docker-capture-diagnostic
+          path: docker-capture.xml
+          if-no-files-found: error
       - name: Docker enforces timeout
         run: pytest -q tests/test_docker_integration.py::test_docker_runner_enforces_timeout
       - name: Docker honors kill switch
