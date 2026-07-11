@@ -1,3 +1,5 @@
+import pytest
+
 from pentestng.models import Task
 from pentestng.session import JsonSessionStore, Session
 
@@ -12,3 +14,9 @@ def test_session_round_trip(tmp_path) -> None:
 
     assert restored.id == session.id
     assert restored.tasks[0].title == "Recon"
+
+
+def test_session_id_cannot_escape_store_root(tmp_path) -> None:
+    store = JsonSessionStore(tmp_path)
+    with pytest.raises(ValueError, match="valid UUID"):
+        store.load("../outside")
