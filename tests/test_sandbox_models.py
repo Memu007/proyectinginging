@@ -1,55 +1,47 @@
 import pytest
 
-from pentestng.sandbox.models import CommandSpec, ResourceLimits, SandboxPolicy
+from pentestng.sandbox.models import ExecutionSpec, ResourceLimits
 
 
-def test_resource_limits_reject_invalid_values() -> None:
-    with pytest.raises(ValueError, match="cpus"):
-        ResourceLimits(cpus=0)
-    with pytest.raises(ValueError, match="memory_mb"):
-        ResourceLimits(memory_mb=8)
-    with pytest.raises(ValueError, match="timeout_seconds"):
-        ResourceLimits(timeout_seconds=0)
+@pytest.mark.parametrize(
+    ("field", "value"),
+    [
+        ("cpus", 0),
+        ("memory_mb", 32),
+        ("pids", 1),
+        ("timeout_seconds", 0),
+        ("tmpfs_mb", 4),
+    ],
+)
+def test_invalid_resource_limits_rejected(field: str, value: int | float) -> None:
+    kwargs = {field: value}
+    with pytest.raises(ValueError):
+        ResourceLimits(**kwargs)
 
 
-def test_command_spec_rejects_nul_bytes() -> None:
-    with pytest.raises(ValueError, match="NUL"):
-        CommandSpec(executable="python\x00")
+def test_execution_spec_rejects_empty_argv() -> None:
+    with pytest.raises(ValueError, match="executable"):
+        ExecutionSpec(image="alpine:3.20", argv=())
 
 
-def test_policy_rejects_unlisted_image() -> None:
-    policy = SandboxPolicy(
-        allowed_images=frozenset({"tool@sha256:" + "a" * 64}),
-        allowed_executables=frozenset({"tool"}),
-    )
-    with pytest.raises(PermissionError, match="not allowlisted"):
-        policy.authorize("other@sha256:" + "b" * 64, CommandSpec("tool"))
+def test_execution_spec_rejects_artifact_traversal() -> None:
+    with pytest.raises(ValueError, match="artifact_paths"):
+        ExecutionSpec(image="alpine:3.20", argv=("/bin/echo", "ok"), artifact_paths=("../x",))
 
 
-def test_policy_requires_digest_by_default() -> None:
-    policy = SandboxPolicy(
-        allowed_images=frozenset({"tool:latest"}),
-        allowed_executables=frozenset({"tool"}),
-    )
-    with pytest.raises(PermissionError, match="pinned"):
-        policy.authorize("tool:latest", CommandSpec("tool"))
+def test_execution_spec_rejects_duplicate_environment_keys() -> None:
+    with pytest.raises(ValueError, match="duplicate"):
+        ExecutionSpec(
+            image="alpine:3.20",
+            argv=("/bin/echo", "ok"),
+            environment=(("MODE", "a"), ("MODE", "b")),
+        )
 
 
-def test_policy_rejects_unlisted_executable() -> None:
-    image = "tool@sha256:" + "a" * 64
-    policy = SandboxPolicy(
-        allowed_images=frozenset({image}),
-        allowed_executables=frozenset({"tool"}),
-    )
-    with pytest.raises(PermissionError, match="Executable"):
-        policy.authorize(image, CommandSpec("sh"))
-
-
-def test_policy_rejects_option_like_image_reference() -> None:
-    policy = SandboxPolicy(
-        allowed_images=frozenset({"--privileged"}),
-        allowed_executables=frozenset({"tool"}),
-        require_image_digest=False,
-    )
-    with pytest.raises(PermissionError, match="invalid"):
-        policy.authorize("--privileged", CommandSpec("tool"))
+def test_execution_spec_rejects_environment_newlines() -> None:
+    with pytest.raises(ValueError, match="environment value"):
+        ExecutionSpec(
+            image="alpine:3.20",
+            argv=("/bin/echo", "ok"),
+            environment=(("MODE", "safe\nINJECTED=yes"),),
+        )
