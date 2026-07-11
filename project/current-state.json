@@ -5,14 +5,21 @@
     "provider-neutral LLM protocol with deterministic mock",
     "task state machine and evidence gate",
     "JSON session persistence round trip",
-    "scope manifest host, network and port enforcement",
-    "single-step planner-executor orchestration"
+    "session identifier path traversal prevention",
+    "scope manifest host, network, port and positive limit enforcement",
+    "single-step planner-executor orchestration",
+    "executor exceptions recorded as failed tasks",
+    "successful execution without evidence remains unverified"
   ],
   "implemented_unverified": [],
   "blocked": [],
   "checks": {
-    "pytest": "9 passed",
-    "ruff": "passed"
+    "pytest_local": "14 passed",
+    "ruff_local": "passed",
+    "compileall_local": "passed",
+    "smoke_local": "passed",
+    "editable_install_local": "passed",
+    "github_actions_latest": "pending"
   },
-  "next": "Publish bootstrap branch and let GitHub Actions repeat the checks"
+  "next": "Confirm GitHub Actions on the hardened bootstrap commit"
 }
