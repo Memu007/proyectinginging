@@ -13,19 +13,18 @@ milestones:
       - unit tests
   - id: M1
     title: Isolated execution
-    status: IN_REVIEW
+    status: IMPLEMENTED_UNVERIFIED
     goals:
       - disposable container runner
       - resource limits
-      - offline network enforcement
-      - scoped target preflight
+      - network scope enforcement
       - artifact collection
       - kill switch
+      - real Docker integration tests
   - id: M2
     title: Controlled discovery
     status: PLANNED
     goals:
-      - scoped network gateway
       - HTTPx adapter
       - Katana adapter
       - Kiterunner adapter
