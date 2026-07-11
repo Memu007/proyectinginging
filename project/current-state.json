@@ -19,7 +19,7 @@
     "compileall_local": "passed",
     "smoke_local": "passed",
     "editable_install_local": "passed",
-    "github_actions_latest": "pending"
+    "github_actions": "passed on hardened bootstrap commit bc55284318449e664b680d3d3b3dbb4c362f4d79"
   },
-  "next": "Confirm GitHub Actions on the hardened bootstrap commit"
+  "next": "Review and merge the bootstrap PR, then begin M1 isolated execution"
 }
