@@ -25,7 +25,7 @@ packages = ["src/pentestng"]
 pythonpath = ["src"]
 testpaths = ["tests"]
 markers = [
-  "docker: integration tests requiring a running Docker daemon",
+  "docker_integration: requires a working Docker daemon",
 ]
 
 [tool.ruff]
